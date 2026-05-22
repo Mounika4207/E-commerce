@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Shop wave</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css" />
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',sans-serif;background:#f1f3f6;color:#212121}
+:root{--fk-blue:#2874f0;--fk-yellow:#ffe500;--fk-text:#212121;--fk-gray:#878787;--fk-border:#e0e0e0;--fk-green:#388e3c;--fk-orange:#ff6161}
+
+/* HEADER */
+.header{background:var(--fk-blue);padding:10px 0;position:sticky;top:0;z-index:100}
+.header-inner{max-width:1200px;margin:0 auto;display:flex;align-items:center;gap:16px;padding:0 16px}
+.logo{color:#fff;font-size:22px;font-weight:700;font-style:italic;white-space:nowrap;display:flex;align-items:center;gap:4px;text-decoration:none}
+.logo-sub{color:var(--fk-yellow);font-size:10px;font-style:italic;line-height:1.2}
+.search-box{flex:1;display:flex;background:#fff;border-radius:2px;overflow:hidden}
+.search-box input{flex:1;border:none;outline:none;padding:10px 14px;font-size:14px}
+.search-btn{background:var(--fk-blue);border:none;padding:0 18px;cursor:pointer}
+.search-btn i{color:#fff;font-size:20px}
+.nav-links{display:flex;gap:20px;align-items:center}
+.nav-links a{color:#fff;text-decoration:none;display:flex;align-items:center;gap:5px;cursor:pointer;font-size:14px;white-space:nowrap}
+.nav-links a:hover{color:var(--fk-yellow)}
+.cart-badge{background:var(--fk-yellow);color:var(--fk-blue);border-radius:50%;width:18px;height:18px;display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:700}
+
+/* CATEGORIES BAR */
+.categories{background:#fff;border-bottom:1px solid var(--fk-border);position:sticky;top:56px;z-index:99}
+.cat-inner{max-width:1200px;margin:0 auto;display:flex;padding:0 8px;overflow-x:auto;scrollbar-width:none}
+.cat-inner::-webkit-scrollbar{display:none}
+.cat-item{display:flex;flex-direction:column;align-items:center;padding:12px 18px;cursor:pointer;border-bottom:3px solid transparent;white-space:nowrap;min-width:80px;transition:border-color 0.15s;gap:4px}
+.cat-item:hover,.cat-item.active{border-bottom-color:var(--fk-blue)}
+.cat-item i{font-size:22px;color:#555}
+.cat-item.active i{color:var(--fk-blue)}
+.cat-item span{font-size:11px;color:var(--fk-text)}
+
+/* PAGE WRAPPER */
+.page{display:none}
+.page.active{display:block}
+.container{max-width:1200px;margin:0 auto;padding:16px}
+
+/* BANNER GRID */
+.banner-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:16px}
+.banner{border-radius:4px;overflow:hidden;cursor:pointer;height:190px;display:flex;align-items:flex-end;padding:20px;color:#fff}
+.banner-1{background:linear-gradient(135deg,#5b2d9e,#9b59d6)}
+.banner-2{background:linear-gradient(135deg,#1a6b4a,#2ea870)}
+.banner-3{background:#fff;border:1px solid var(--fk-border);color:var(--fk-text);align-items:center;flex-direction:column;justify-content:center;gap:6px}
+.banner-title{font-size:17px;font-weight:700;line-height:1.3}
+.banner-sub{font-size:12px;opacity:0.85;margin-top:4px}
+
+/* SECTION */
+.section{background:#fff;border-radius:2px;margin-bottom:12px;padding:16px}
+.section-title{font-size:18px;font-weight:700;margin-bottom:14px;display:flex;justify-content:space-between;align-items:center}
+.see-all{font-size:13px;color:var(--fk-blue);cursor:pointer;font-weight:500}
+
+/* CATEGORY GRID (homepage) */
+.cat-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:8px}
+.cat-card{text-align:center;cursor:pointer;padding:10px;border-radius:4px;transition:background 0.15s}
+.cat-card:hover{background:#f5f5f5}
+.cat-circle{width:72px;height:72px;border-radius:50%;margin:0 auto 8px;display:flex;align-items:center;justify-content:center;font-size:28px}
+.cat-card span{font-size:12px}
+.cat-circle img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+
+/* PRODUCT GRID */
+.product-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--fk-border)}
+.product-card{background:#fff;padding:12px;cursor:pointer;transition:box-shadow 0.15s;position:relative}
+.product-card:hover{box-shadow:0 2px 16px rgba(0,0,0,0.12);z-index:1}
+.wishlist-btn{position:absolute;top:10px;right:10px;background:none;border:none;cursor:pointer;font-size:20px;color:#ccc;line-height:1}
+.wishlist-btn.active{color:#e91e63}
+.product-img{width:100%;aspect-ratio:3/4;object-fit:cover;background:#f5f5f5;border-radius:2px;margin-bottom:8px;display:flex;align-items:center;justify-content:center;font-size:48px}
+.product-img img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  border-radius:2px;
+}
+.product-brand{font-size:12px;color:var(--fk-gray);margin-bottom:2px}
+.product-name{font-size:13px;margin-bottom:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.price-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:4px}
+.price{font-size:14px;font-weight:700}
+.old-price{font-size:12px;color:var(--fk-gray);text-decoration:line-through}
+.discount{font-size:12px;color:var(--fk-green);font-weight:500}
+.assured{display:inline-flex;align-items:center;gap:2px;font-size:10px;color:var(--fk-blue);font-weight:600;border:1px solid var(--fk-blue);border-radius:2px;padding:1px 4px}
+.hot-deal{display:inline-block;background:#ff6161;color:#fff;font-size:10px;font-weight:700;padding:2px 6px;border-radius:2px;margin-top:4px}
+
+/* ── LISTING PAGE ── */
+.listing-header{background:#fff;padding:12px 16px;margin-bottom:12px;border-radius:2px;display:flex;align-items:center;gap:12px}
+.listing-title{font-size:16px;font-weight:600}
+.listing-count{font-size:12px;color:var(--fk-gray)}
+.sort-wrap{margin-left:auto;display:flex;align-items:center;gap:8px}
+.sort-label{font-size:13px;color:var(--fk-gray)}
+.sort-tabs{display:flex;gap:4px}
+.sort-tab{padding:6px 14px;border:1px solid var(--fk-border);border-radius:20px;font-size:13px;cursor:pointer;background:#fff}
+.sort-tab.active{border-color:var(--fk-blue);color:var(--fk-blue)}
+.listing-layout{display:grid;grid-template-columns:220px 1fr;gap:12px}
+
+/* FILTERS */
+.filters{background:#fff;border-radius:2px;padding:16px;align-self:start;position:sticky;top:110px;max-height:calc(100vh - 130px);overflow-y:auto}
+.filter-title{font-size:13px;font-weight:700;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid var(--fk-border)}
+.filter-section{margin-bottom:16px;padding-bottom:16px;border-bottom:1px solid var(--fk-border)}
+.filter-section:last-child{border:none;margin-bottom:0}
+.filter-section-title{font-size:13px;font-weight:600;margin-bottom:8px}
+.filter-item{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.filter-item input[type=checkbox]{cursor:pointer;accent-color:var(--fk-blue)}
+.filter-item label{font-size:13px;cursor:pointer}
+.filter-item label span{color:var(--fk-gray);font-size:11px}
+.listing-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--fk-border)}
+.listing-grid .product-card{background:#fff}
+
+/* ── PRODUCT DETAIL PAGE ── */
+.detail-layout{display:grid;grid-template-columns:420px 1fr;gap:16px;align-items:start}
+.img-gallery{background:#fff;border-radius:2px;padding:16px;position:sticky;top:110px}
+.thumb-row{display:flex;gap:8px}
+.thumb{width:62px;height:62px;border:2px solid transparent;border-radius:2px;overflow:hidden;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:24px;background:#f5f5f5}
+.thumb.active{border-color:var(--fk-blue)}
+/* MAIN IMAGE */
+
+.main-img{
+  width:100%;
+  aspect-ratio:1;
+  background:#f5f5f5;
+  border-radius:4px;
+  overflow:hidden;
+  margin-bottom:12px;
+  display:flex;align-items:center;justify-content:center;font-size:96px;margin-bottom:12px;transition:all 0.2s
+}
+
+.main-img img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+
+/* THUMBNAILS */
+
+
+
+.thumb img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+
+.thumb.active{
+  border-color:#2874f0;
+}
+.detail-card{background:#fff;border-radius:2px;padding:20px;margin-bottom:12px}
+.detail-brand{font-size:16px;color:var(--fk-gray);margin-bottom:4px}
+.detail-name{font-size:20px;font-weight:500;margin-bottom:10px}
+.rating-badge{background:var(--fk-green);color:#fff;font-size:12px;font-weight:700;padding:3px 8px;border-radius:12px;display:inline-flex;align-items:center;gap:4px}
+.review-count{font-size:14px;color:var(--fk-gray)}
+.detail-price-row{display:flex;align-items:baseline;gap:12px;margin:14px 0 16px}
+.detail-disc{font-size:18px;font-weight:600;color:var(--fk-green)}
+.detail-old{font-size:18px;color:var(--fk-gray);text-decoration:line-through}
+.detail-price{font-size:28px;font-weight:700}
+.wow-box{background:#e6f0ff;border:1px solid #aac4f5;border-radius:4px;padding:14px;margin-bottom:16px}
+.wow-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.wow-title{font-size:13px;font-weight:700;color:var(--fk-blue)}
+.buy-price{font-size:20px;font-weight:700;margin-bottom:12px}
+.offer-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.offer-item{background:#fff;border:1px solid var(--fk-border);border-radius:4px;padding:8px;display:flex;justify-content:space-between;align-items:flex-start;gap:4px}
+.offer-amount{font-size:13px;font-weight:600}
+.offer-bank{font-size:12px;color:#555}
+.offer-type{font-size:11px;color:var(--fk-gray)}
+.apply-btn{color:var(--fk-blue);font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;border:none;background:none;padding:0}
+.size-section{margin-bottom:16px}
+.size-label{font-size:14px;font-weight:600;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center}
+.size-chart{color:var(--fk-blue);font-size:13px;cursor:pointer;font-weight:400}
+.size-options{display:flex;gap:10px}
+.size-btn{width:46px;height:46px;border:1px solid var(--fk-border);border-radius:50%;font-size:13px;cursor:pointer;background:#fff;transition:all 0.15s}
+.size-btn:hover,.size-btn.active{border-color:var(--fk-blue);color:var(--fk-blue);font-weight:600}
+.action-btns{display:flex;gap:12px;margin-bottom:4px}
+.btn-cart{flex:1;padding:14px;border:none;border-radius:2px;font-size:15px;font-weight:700;cursor:pointer;background:#ff9f00;color:#fff;display:flex;align-items:center;justify-content:center;gap:8px}
+.btn-buy{flex:1;padding:14px;border:none;border-radius:2px;font-size:15px;font-weight:700;cursor:pointer;background:#fb641b;color:#fff}
+.delivery-card{background:#fff;border-radius:2px;padding:16px;margin-bottom:12px}
+.delivery-title{font-size:14px;font-weight:600;margin-bottom:12px}
+.delivery-row{border:1px solid var(--fk-border);border-radius:4px;padding:10px 12px;margin-bottom:8px;font-size:13px;display:flex;align-items:center;gap:10px}
+.delivery-row i{font-size:18px;color:#555;flex-shrink:0}
+.date-bold{font-size:14px;font-weight:600}
+.order-by{font-size:12px;color:var(--fk-orange)}
+.services-row{display:flex;gap:28px;padding:14px 0 6px;border-top:1px solid var(--fk-border)}
+.svc-item{display:flex;flex-direction:column;align-items:center;gap:5px;font-size:12px;color:var(--fk-gray);text-align:center}
+.svc-item i{font-size:24px;color:#555}
+.specs-card{background:#fff;border-radius:2px;padding:16px}
+.specs-title{font-size:16px;font-weight:700;margin-bottom:12px}
+.spec-row{display:grid;grid-template-columns:140px 1fr;padding:9px 0;border-bottom:1px solid var(--fk-border);font-size:13px}
+.spec-row:last-child{border:none}
+.spec-key{color:var(--fk-gray)}
+.spec-val{font-weight:500}
+
+/* BREADCRUMB */
+.breadcrumb{font-size:12px;color:var(--fk-gray);margin-bottom:12px}
+.breadcrumb a{color:var(--fk-blue);cursor:pointer;text-decoration:none}
+.breadcrumb a:hover{text-decoration:underline}
+
+/* DEALS GRID */
+.deals-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.deal-card{background:#f5f5f5;border-radius:4px;padding:20px;text-align:center;cursor:pointer;transition:background 0.15s}
+.deal-card:hover{background:#ececec}
+.deal-icon{font-size:40px;margin-bottom:10px}
+.deal-name{font-size:14px;font-weight:600;margin-bottom:4px}
+.deal-price{font-size:13px;color:var(--fk-gray);margin-bottom:4px}
+.deal-tag{font-size:12px;color:var(--fk-green);font-weight:500}
+
+/* DROPDOWN MENU */
+.user-menu-wrap{position:relative}
+.dropdown{display:none;position:absolute;right:0;top:calc(100% + 8px);background:#fff;border-radius:4px;box-shadow:0 4px 20px rgba(0,0,0,0.15);min-width:200px;z-index:200;overflow:hidden}
+.dropdown.open{display:block}
+.dropdown-header{background:#2874f0;color:#fff;padding:14px 16px;font-size:13px;display:flex;justify-content:space-between;align-items:center}
+.dropdown-header a{color:var(--fk-yellow);font-size:13px;font-weight:600;text-decoration:none}
+.dropdown-item{display:flex;align-items:center;gap:10px;padding:12px 16px;font-size:14px;cursor:pointer;border-bottom:1px solid var(--fk-border)}
+.dropdown-item:last-child{border:none}
+.dropdown-item:hover{background:#f5f5f5}
+.dropdown-item i{font-size:18px;color:#555}
+</style>
+</head>
+<body>
+
+<!-- ═══ HEADER ═══ -->
+<header class="header">
+  <div class="header-inner">
+    <a class="logo" onclick="showPage('home')" href="#">
+      ShopWave
+      <span class="logo-sub">Explore<br>Plus</span>
+    </a>
+    <div class="search-box">
+      <input type="text" placeholder="Search for Products, Brands and More" id="searchInput" />
+      <button class="search-btn"><i class="ti ti-search"></i></button>
+    </div>
+    <nav class="nav-links">
+      <div class="user-menu-wrap">
+        <a onclick="toggleDropdown()"><i class="ti ti-user"></i> Yashna <i class="ti ti-chevron-down" style="font-size:12px"></i></a>
+        <div class="dropdown" id="userDropdown">
+          <div class="dropdown-header">New customer? <a href="#">Sign Up</a></div>
+          <div class="dropdown-item"><i class="ti ti-user"></i> My Profile</div>
+          <div class="dropdown-item"><i class="ti ti-package"></i> Orders</div>
+          <div class="dropdown-item"><i class="ti ti-heart"></i> Wishlist</div>
+          <div class="dropdown-item"><i class="ti ti-gift"></i> Rewards</div>
+          <div class="dropdown-item"><i class="ti ti-headset"></i> Customer Care</div>
+        </div>
+      </div>
+      <a onclick="showPage('home')"><i class="ti ti-shopping-cart"></i> Cart <span class="cart-badge" id="cartCount">5</span></a>
+      <a href="#"><i class="ti ti-dots"></i> More</a>
+    </nav>
+  </div>
+</header>
+
+<!-- ═══ CATEGORY BAR ═══ -->
+<div class="categories">
+  <div class="cat-inner">
+    <div class="cat-item active" onclick="setCat(this,'home')"><i class="ti ti-star"></i><span>For You</span></div>
+    <div class="cat-item" onclick="setCat(this,'listing')"><i class="ti ti-shirt"></i><span>Fashion</span></div>
+    <div class="cat-item" onclick="setCat(this,'home')"><i class="ti ti-device-mobile"></i><span>Mobiles</span></div>
+    <div class="cat-item" onclick="setCat(this,'home')"><i class="ti ti-sparkles"></i><span>Beauty</span></div>
+    <div class="cat-item" onclick="setCat(this,'home')"><i class="ti ti-device-laptop"></i><span>Electronics</span></div>
+    <div class="cat-item" onclick="setCat(this,'home')"><i class="ti ti-home"></i><span>Home</span></div>
+    <div class="cat-item" onclick="setCat(this,'home')"><i class="ti ti-tool"></i><span>Appliances</span></div>
+    <div class="cat-item" onclick="setCat(this,'home')"><i class="ti ti-bike"></i><span>2 Wheelers</span></div>
+    <div class="cat-item" onclick="setCat(this,'home')"><i class="ti ti-barbell"></i><span>Sports &amp; Fitness</span></div>
+    <div class="cat-item" onclick="setCat(this,'home')"><i class="ti ti-book"></i><span>Books &amp; More</span></div>
+    <div class="cat-item" onclick="setCat(this,'home')"><i class="ti ti-sofa"></i><span>Furniture</span></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════
+     HOME PAGE
+════════════════════════════════════ -->
+<div class="page active" id="home">
+  <div class="container">
+
+    <!-- Banners -->
+    <div class="banner-grid">
+      <div class="banner banner-1" onclick="showPage('listing')">
+        <div>
+          <div style="font-size:11px;background:rgba(255,255,255,0.2);padding:3px 8px;border-radius:12px;margin-bottom:8px;display:inline-block">21st – 22nd May</div>
+          <div class="banner-title">Fashionista Fest<br>Year's hottest edit!</div>
+          <div class="banner-sub">Curated for you · Shop now →</div>
+        </div>
+      </div>
+      <div class="banner banner-2" onclick="showPage('listing')">
+        <div>
+          <div class="banner-title">Welcome<br>Spring Summer '26</div>
+          <div class="banner-sub">Fresh arrivals · Explore the collection</div>
+        </div>
+      </div>
+      <div class="banner banner-3" onclick="showPage('listing')">
+        <div style="font-size:13px;color:#555;font-weight:500">Chic western glamour</div>
+        <div style="font-size:14px;color:var(--fk-text);margin:4px 0">Dresses, co-ords...</div>
+        <div style="font-size:26px;font-weight:800;color:var(--fk-text)">Under ₹399</div>
+        <div style="font-size:12px;color:var(--fk-blue);margin-top:6px">Shop Now →</div>
+      </div>
+    </div>
+
+    <!-- Category shortcuts -->
+    <div class="section">
+      <div class="section-title">Shop by Category <span class="see-all" onclick="showPage('listing')">See All</span></div>
+      <div class="cat-grid">
+        <div class="cat-card" onclick="showPage('listing')">
+          <div class="cat-circle" style="background:#fce4ec"><img src="1.png" alt="kurti"></div><span>Kurta Sets</span>
+        </div>
+        <div class="cat-card" onclick="showPage('listing')">
+          <div class="cat-circle" style="background:#e8f5e9"><img src="14.png" alt="kurti"></div><span>men's wear</span>
+        </div>
+        <div class="cat-card" onclick="showPage('listing')">
+          <div class="cat-circle" style="background:#fff3e0"><img src="10.png" alt="kurti"></div><span>Skin care</span>
+        </div>
+        <div class="cat-card" onclick="showPage('listing')">
+          <div class="cat-circle" style="background:#e3f2fd"><img src="11.png" alt="kurti"></div><span>watch</span>
+        </div>
+        <div class="cat-card" onclick="showPage('listing')">
+          <div class="cat-circle" style="background:#f3e5f5"><img src="12.png" alt="kurti"></div><span>shoes</span>
+        </div>
+        <div class="cat-card" onclick="showPage('listing')">
+          <div class="cat-circle" style="background:#e0f2f1"><img src="13.png" alt="kurti"></div><span>electronics</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Popular Anarkali Suits -->
+    <div class="section">
+      <div class="section-title">Popular Anarkali Suits <span class="see-all" onclick="showPage('listing')">See All</span></div>
+      <div class="product-grid">
+        <div class="product-card" onclick="showPage('detail')">
+          <button class="wishlist-btn"><i class="ti ti-heart"></i></button>
+          <div class="product-img" style="background:#dce7f5"><img src="1.png" alt="kurta"></div>
+          <div class="product-brand">PILUDI HOUSE</div>
+          <div class="product-name">Printed Kurta, Salwar &amp; Dupatta Set</div>
+          <div class="price-row"><span class="price">₹642</span><span class="old-price">₹2,199</span><span class="discount">70% off</span></div>
+          <span class="hot-deal">Hot Deal</span>
+        </div>
+        <div class="product-card" onclick="showPage('detail')">
+          <button class="wishlist-btn"><i class="ti ti-heart"></i></button>
+          <div class="product-img" style="background:#e8d5f0"><img src="2.png" alt="kurta"></div>
+          <div class="product-brand">PILUDI HOUSE</div>
+          <div class="product-name">Women Silk Blend Kurti Pa...</div>
+          <div class="price-row"><span class="price">₹998</span><span class="old-price">₹2,999</span><span class="discount">66% off</span></div>
+          <span class="assured">✔ Assured</span>
+          <span class="hot-deal">Hot Deal</span>
+        </div>
+        <div class="product-card" onclick="showPage('detail')">
+          <button class="wishlist-btn"><i class="ti ti-heart"></i></button>
+          <div class="product-img" style="background:#f5dfc8"><img src="3.png" alt="kurta"></div>
+          <div class="product-brand">Skylee</div>
+          <div class="product-name">Women Crepe Kurta Patial...</div>
+          <div class="price-row"><span class="price">₹1,262</span><span class="old-price">₹3,398</span><span class="discount">62% off</span></div>
+          <span class="assured">✔ Assured</span>
+          <span class="hot-deal">Hot Deal</span>
+        </div>
+        <div class="product-card" onclick="showPage('detail')">
+          <button class="wishlist-btn"><i class="ti ti-heart"></i></button>
+          <div class="product-img" style="background:#f0efec"><img src="4.png" alt="kurta"></div>
+          <div class="product-brand">PILUDI HOUSE</div>
+          <div class="product-name">Women Silk Blend Kurti Pa...</div>
+          <div class="price-row"><span class="price">₹998</span><span class="old-price">₹2,999</span><span class="discount">66% off</span></div>
+          <span class="assured">✔ Assured</span>
+          <span class="hot-deal">Hot Deal</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Deals -->
+    <div class="section">
+      <div class="section-title">Today's Deals</div>
+      <div class="deals-grid">
+        <div class="deal-card">
+          <div class="deal-icon">❄️</div>
+          <div class="deal-name">Motorola Smart ACs</div>
+          <div class="deal-price">From ₹28,990</div>
+          <div class="deal-tag">Free Installation</div>
+        </div>
+        <div class="deal-card">
+          <div class="deal-icon">📱</div>
+          <div class="deal-name">Nova 2 5G</div>
+          <div class="deal-price">From ₹10,999</div>
+          <div class="deal-tag">Most affordable 5G</div>
+        </div>
+        <div class="deal-card">
+          <div class="deal-icon">👟</div>
+          <div class="deal-name">HRX Footwear</div>
+          <div class="deal-price">Min. 70% Off</div>
+          <div class="deal-tag">Made reliable</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div><!-- /home -->
+
+
+<!-- ═══════════════════════════════════
+     LISTING PAGE
+════════════════════════════════════ -->
+<div class="page" id="listing">
+  <div class="container">
+    <div class="breadcrumb">
+      <a onclick="showPage('home')">Home</a> /
+      <a onclick="showPage('listing')">Clothing &amp; Accessories</a> /
+      <a onclick="showPage('listing')">Ethnic Sets</a> /
+      Anarkali Suits
+    </div>
+
+    <div class="listing-header">
+      <div>
+        <div class="listing-title">Anarkali Suits</div>
+        <div class="listing-count">Showing 1–40 of 455 products</div>
+      </div>
+      <div class="sort-wrap">
+        <span class="sort-label">Sort By</span>
+        <div class="sort-tabs">
+          <button class="sort-tab active" onclick="setSort(this)">Popularity</button>
+          <button class="sort-tab" onclick="setSort(this)">Price: Low to High</button>
+          <button class="sort-tab" onclick="setSort(this)">Price: High to Low</button>
+          <button class="sort-tab" onclick="setSort(this)">Newest First</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="listing-layout">
+      <!-- Filters -->
+      <aside class="filters">
+        <div class="filter-title">FILTERS</div>
+        <div class="filter-section">
+          <div class="filter-section-title">PRICE</div>
+          <input type="range" min="0" max="5000" value="2500" style="width:100%;margin-bottom:8px;accent-color:var(--fk-blue)" />
+          <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--fk-gray)"><span>₹200</span><span>₹5,000+</span></div>
+        </div>
+        <div class="filter-section">
+          <div class="filter-section-title">BRAND</div>
+          <div class="filter-item"><input type="checkbox" checked /><label>PILUDI HOUSE <span>(142)</span></label></div>
+          <div class="filter-item"><input type="checkbox" /><label>Skylee <span>(89)</span></label></div>
+          <div class="filter-item"><input type="checkbox" /><label>BIBA <span>(67)</span></label></div>
+          <div class="filter-item"><input type="checkbox" /><label>Global Desi <span>(54)</span></label></div>
+          <div class="filter-item"><input type="checkbox" /><label>W for Woman <span>(43)</span></label></div>
+        </div>
+        <div class="filter-section">
+          <div class="filter-section-title">COLOR</div>
+          <div class="filter-item"><input type="checkbox" checked /><label>Dark Blue</label></div>
+          <div class="filter-item"><input type="checkbox" /><label>Purple</label></div>
+          <div class="filter-item"><input type="checkbox" /><label>Orange / Rust</label></div>
+          <div class="filter-item"><input type="checkbox" /><label>Off White</label></div>
+          <div class="filter-item"><input type="checkbox" /><label>Pink</label></div>
+          <div class="filter-item"><input type="checkbox" /><label>Sage Green</label></div>
+        </div>
+        <div class="filter-section">
+          <div class="filter-section-title">SIZE</div>
+          <div class="filter-item"><input type="checkbox" /><label>S</label></div>
+          <div class="filter-item"><input type="checkbox" /><label>M</label></div>
+          <div class="filter-item"><input type="checkbox" checked /><label>L</label></div>
+          <div class="filter-item"><input type="checkbox" /><label>XL</label></div>
+          <div class="filter-item"><input type="checkbox" /><label>XXL</label></div>
+        </div>
+        <div class="filter-section">
+          <div class="filter-section-title">CUSTOMER RATINGS</div>
+          <div class="filter-item"><input type="checkbox" /><label>4★ &amp; above</label></div>
+          <div class="filter-item"><input type="checkbox" /><label>3★ &amp; above</label></div>
+        </div>
+        <div class="filter-section">
+          <div class="filter-section-title">DISCOUNT</div>
+          <div class="filter-item"><input type="checkbox" checked /><label>70% or more</label></div>
+          <div class="filter-item"><input type="checkbox" /><label>60% or more</label></div>
+          <div class="filter-item"><input type="checkbox" /><label>50% or more</label></div>
+        </div>
+      </aside>
+
+      <!-- Products -->
+      <div>
+        <div class="listing-grid">
+          <div class="product-card" onclick="showPage('detail')">
+            <button class="wishlist-btn active"><i class="ti ti-heart-filled"></i></button>
+            <div class="product-img" style="background:#dce7f5"><img src="1.png" alt="kurta"></div>
+            <div class="product-brand">PILUDI HOUSE</div>
+            <div class="product-name">Printed Kurta, Salwar &amp; Dupatta Set</div>
+            <div class="price-row"><span class="price">₹642</span><span class="old-price">₹2,199</span><span class="discount">71% off</span></div>
+            <span class="hot-deal">Hot Deal</span>
+          </div>
+          <div class="product-card" onclick="showPage('detail')">
+            <button class="wishlist-btn"><i class="ti ti-heart"></i></button>
+            <div class="product-img" style="background:#e8d5f0"><img src="2.png" alt="kurta"></div>
+            <div class="product-brand">PILUDI HOUSE</div>
+            <div class="product-name">Women Silk Blend Kurti Pa...</div>
+            <div class="price-row"><span class="price">₹998</span><span class="old-price">₹2,999</span><span class="discount">66% off</span></div>
+            <span class="assured">✔ Assured</span><br>
+            <span class="hot-deal">Hot Deal</span>
+          </div>
+          <div class="product-card" onclick="showPage('detail')">
+            <button class="wishlist-btn"><i class="ti ti-heart"></i></button>
+            <div class="product-img" style="background:#f5dfc8"><img src="3.png" alt="kurta"></div>
+            <div class="product-brand">Skylee</div>
+            <div class="product-name">Women Crepe Kurta Patial...</div>
+            <div class="price-row"><span class="price">₹1,262</span><span class="old-price">₹3,398</span><span class="discount">62% off</span></div>
+            <span class="assured">✔ Assured</span><br>
+            <span class="hot-deal">Hot Deal</span>
+          </div>
+          <div class="product-card" onclick="showPage('detail')">
+            <button class="wishlist-btn"><i class="ti ti-heart"></i></button>
+            <div class="product-img" style="background:#f0efec"><img src="4.png" alt="kurta"></div>
+            <div class="product-brand">PILUDI HOUSE</div>
+            <div class="product-name">Women Silk Blend Kurti Pa...</div>
+            <div class="price-row"><span class="price">₹998</span><span class="old-price">₹2,999</span><span class="discount">66% off</span></div>
+            <span class="assured">✔ Assured</span><br>
+            <span class="hot-deal">Hot Deal</span>
+          </div>
+          <div class="product-card" onclick="showPage('detail')">
+            <button class="wishlist-btn"><i class="ti ti-heart"></i></button>
+            <div class="product-img" style="background:#fde8e8"><img src="5.png" alt="kurta"></div>
+            <div class="product-brand">W for Woman</div>
+            <div class="product-name">Embroidered Anarkali Kurta Set</div>
+            <div class="price-row"><span class="price">₹899</span><span class="old-price">₹2,499</span><span class="discount">64% off</span></div>
+            <span class="hot-deal">Hot Deal</span>
+          </div>
+          <div class="product-card" onclick="showPage('detail')">
+            <button class="wishlist-btn"><i class="ti ti-heart"></i></button>
+            <div class="product-img" style="background:#e8f5e9"><img src="6.png" alt="kurta"></div>
+            <div class="product-brand">Global Desi</div>
+            <div class="product-name">Floral Print Kurta Set with Dupatta</div>
+            <div class="price-row"><span class="price">₹749</span><span class="old-price">₹2,099</span><span class="discount">64% off</span></div>
+            <span class="hot-deal">Hot Deal</span>
+          </div>
+          <div class="product-card" onclick="showPage('detail')">
+            <button class="wishlist-btn"><i class="ti ti-heart"></i></button>
+            <div class="product-img" style="background:#fff3cd"><img src="7.png" alt="kurta"></div>
+            <div class="product-brand">BIBA</div>
+            <div class="product-name">Women Cotton Anarkali Suit</div>
+            <div class="price-row"><span class="price">₹1,199</span><span class="old-price">₹3,499</span><span class="discount">66% off</span></div>
+            <span class="assured">✔ Assured</span><br>
+            <span class="hot-deal">Hot Deal</span>
+          </div>
+          <div class="product-card" onclick="showPage('detail')">
+            <button class="wishlist-btn"><i class="ti ti-heart"></i></button>
+            <div class="product-img" style="background:#f5e8f5"><img src="8.png" alt="kurta"></div>
+            <div class="product-brand">Skylee</div>
+            <div class="product-name">Georgette Layered Anarkali...</div>
+            <div class="price-row"><span class="price">₹1,449</span><span class="old-price">₹3,899</span><span class="discount">63% off</span></div>
+            <span class="assured">✔ Assured</span>
+          </div>
+          <div class="product-card" onclick="showPage('detail')">
+            <button class="wishlist-btn"><i class="ti ti-heart"></i></button>
+            <div class="product-img" style="background:#e8f0fe"><img src="9.png" alt="kurta"></div>
+            <div class="product-brand">PILUDI HOUSE</div>
+            <div class="product-name">Mirror Work Festive Anarkali</div>
+            <div class="price-row"><span class="price">₹1,099</span><span class="old-price">₹2,799</span><span class="discount">61% off</span></div>
+            <span class="hot-deal">Hot Deal</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div><!-- /listing -->
+
+
+<!-- ═══════════════════════════════════
+     PRODUCT DETAIL PAGE
+════════════════════════════════════ -->
+<div class="page" id="detail">
+  <div class="container">
+    <div class="breadcrumb">
+      <a onclick="showPage('home')">Home</a> /
+      <a onclick="showPage('listing')">Clothing &amp; Accessories</a> /
+      <a onclick="showPage('listing')">Ethnic Sets</a> /
+      <a onclick="showPage('listing')">Women's Ethnic Sets</a> /
+      PILUDI HOUSE Women's Ethnic Sets /
+      Printed Kurta, Salwar &amp; Dupatt...
+    </div>
+
+    <div class="detail-layout">
+      <!-- Gallery -->
+      <div class="img-gallery">
+
+  <!-- Main Image -->
+  <div class="main-img">
+    <img id="mainImg" src="1.png" alt="Product">
+  </div>
+
+  <!-- Thumbnail Images -->
+  <div class="thumb-row">
+
+    <div class="thumb active"
+      onclick="changeImage(this,'1.png')">
+
+      <img src="1.png" alt="">
+    </div>
+
+    <div class="thumb"
+      onclick="changeImage(this,'2.png')">
+
+      <img src="2.png" alt="">
+    </div>
+
+    <div class="thumb"
+      onclick="changeImage(this,'3.png')">
+
+      <img src="3.png" alt="">
+    </div>
+
+    <div class="thumb"
+      onclick="changeImage(this,'4.png')">
+
+      <img src="4.png" alt="">
+    </div>
+
+  </div>
+
+</div>
+
+      <!-- Info column -->
+      <div>
+        <!-- Price & Offers Card -->
+        <div class="detail-card">
+          <div class="detail-brand">PILUDI HOUSE</div>
+          <div class="detail-name">Printed Kurta, Salwar &amp; Dupatta Set</div>
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+            <span class="rating-badge"><i class="ti ti-star-filled" style="font-size:11px"></i> 3.5</span>
+            <span class="review-count">280 Ratings</span>
+          </div>
+          <span class="hot-deal" style="font-size:13px;padding:4px 10px">Hot Deal</span>
+          <div class="detail-price-row">
+            <span class="detail-disc">▼ 71%</span>
+            <span class="detail-old">₹2,199</span>
+            <span class="detail-price">₹642</span>
+          </div>
+
+          <!-- WOW Box -->
+          <div class="wow-box">
+            <div class="wow-header">
+              <div class="wow-title">🔥 Apply offers for maximum savings</div>
+              <i class="ti ti-chevron-up" style="color:var(--fk-blue)"></i>
+            </div>
+            <div class="buy-price">Buy at ₹557</div>
+            <div class="offer-grid">
+              <div class="offer-item">
+                <div><div class="offer-amount">₹85 off</div><div class="offer-bank">BHIM</div><div class="offer-type">UPI · Includes cashback</div></div>
+                <button class="apply-btn">Apply</button>
+              </div>
+              <div class="offer-item">
+                <div><div class="offer-amount">₹33 off</div><div class="offer-bank">Flipkart Axis</div><div class="offer-type">Credit Card · Cashback</div></div>
+                <button class="apply-btn">Apply</button>
+              </div>
+              <div class="offer-item">
+                <div><div class="offer-amount">₹50 off</div><div class="offer-bank">Mobikwik</div><div class="offer-type">UPI · Includes cashback</div></div>
+                <button class="apply-btn">Apply</button>
+              </div>
+              <div class="offer-item">
+                <div><div class="offer-amount">₹33 off</div><div class="offer-bank">Flipkart Axis</div><div class="offer-type">Debit Card · Cashback</div></div>
+                <button class="apply-btn">Apply</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Size -->
+          <div class="size-section">
+            <div class="size-label">Select Size <span class="size-chart">Size Chart</span></div>
+            <div class="size-options">
+              <button class="size-btn" onclick="selectSize(this)">S</button>
+              <button class="size-btn" onclick="selectSize(this)">M</button>
+              <button class="size-btn active" onclick="selectSize(this)">L</button>
+              <button class="size-btn" onclick="selectSize(this)">XL</button>
+              <button class="size-btn" onclick="selectSize(this)">XXL</button>
+            </div>
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="action-btns">
+            <button class="btn-cart" onclick="addToCart()"><i class="ti ti-shopping-cart"></i> Add to cart</button>
+            <button class="btn-buy">Buy at ₹642</button>
+          </div>
+        </div>
+
+        <!-- Delivery Card -->
+        <div class="delivery-card">
+          <div class="delivery-title">Delivery details</div>
+          <div class="delivery-row" style="color:var(--fk-blue);cursor:pointer">
+            <i class="ti ti-map-pin"></i>
+            <span>Location not set · <strong>Select delivery location ›</strong></span>
+          </div>
+          <div class="delivery-row">
+            <i class="ti ti-truck"></i>
+            <div>
+              <div class="date-bold">Delivery by 25 May, Mon</div>
+              <div class="order-by">Order in 00h 50m 39s</div>
+            </div>
+          </div>
+          <div class="delivery-row">
+            <i class="ti ti-building-store"></i>
+            <div>
+              Fulfilled by <strong>DharmEnterprise111</strong><br>
+              <span style="font-size:12px;color:var(--fk-gray)">3.8 ★ · 3 years with Flipkart · <a href="#" style="color:var(--fk-blue);text-decoration:none">See other sellers</a></span>
+            </div>
+          </div>
+          <div class="services-row">
+            <div class="svc-item"><i class="ti ti-refresh-dot"></i><span>10-Day<br>Return</span></div>
+            <div class="svc-item"><i class="ti ti-cash"></i><span>Cash on<br>Delivery</span></div>
+            <div class="svc-item"><i class="ti ti-headset"></i><span>24×7 Customer<br>Support</span></div>
+          </div>
+        </div>
+
+        <!-- Specs Card -->
+        <div class="specs-card">
+          <div class="specs-title">Product highlights</div>
+          <div class="spec-row"><div class="spec-key">Type</div><div class="spec-val">Kurta, Salwar &amp; Dupatta Set</div></div>
+          <div class="spec-row"><div class="spec-key">Top Type</div><div class="spec-val">Kurti</div></div>
+          <div class="spec-row"><div class="spec-key">Bottom Type</div><div class="spec-val">Salwar</div></div>
+          <div class="spec-row"><div class="spec-key">Color</div><div class="spec-val">Dark Blue</div></div>
+          <div class="spec-row"><div class="spec-key">Pattern</div><div class="spec-val">Printed</div></div>
+          <div class="spec-row"><div class="spec-key">Fabric</div><div class="spec-val">Cotton Blend</div></div>
+          <div class="spec-row"><div class="spec-key">Occasion</div><div class="spec-val">Casual, Festive</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div><!-- /detail -->
+
+<script>
+/* ── Navigation ── */
+function showPage(id){
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+function setCat(el, page){
+  document.querySelectorAll('.cat-item').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  showPage(page);
+}
+
+/* ── Sorting ── */
+function setSort(btn){
+  document.querySelectorAll('.sort-tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+/* ── Size selector ── */
+function selectSize(btn){
+  document.querySelectorAll('.size-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+/* ── Thumbnail gallery ── */
+function changeImage(el, src){
+
+  document.querySelectorAll('.thumb')
+    .forEach(t => t.classList.remove('active'));
+
+  el.classList.add('active');
+
+  document.getElementById('mainImg').src = src;
+}
+
+/* ── Wishlist toggle ── */
+document.addEventListener('click', e => {
+  if(e.target.closest('.wishlist-btn')){
+    e.stopPropagation();
+    const btn = e.target.closest('.wishlist-btn');
+    btn.classList.toggle('active');
+    btn.innerHTML = btn.classList.contains('active')
+      ? '<i class="ti ti-heart-filled"></i>'
+      : '<i class="ti ti-heart"></i>';
+  }
+});
+
+/* ── Cart counter ── */
+function addToCart(){
+  const badge = document.getElementById('cartCount');
+  badge.textContent = parseInt(badge.textContent) + 1;
+  const btn = document.querySelector('.btn-cart');
+  btn.textContent = '✓ Added!';
+  btn.style.background = '#388e3c';
+  setTimeout(() => {
+    btn.innerHTML = '<i class="ti ti-shopping-cart" style="margin-right:6px;vertical-align:-2px"></i>Add to cart';
+    btn.style.background = '#ff9f00';
+  }, 1500);
+}
+
+/* ── User dropdown ── */
+function toggleDropdown(){
+  document.getElementById('userDropdown').classList.toggle('open');
+}
+document.addEventListener('click', e => {
+  if(!e.target.closest('.user-menu-wrap')){
+    document.getElementById('userDropdown').classList.remove('open');
+  }
+});
+</script>
+</body>
+</html>
